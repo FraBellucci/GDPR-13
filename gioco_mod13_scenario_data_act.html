@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>MOD13 – Scenario: Data Act</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+body{background:linear-gradient(135deg,#004d40,#00695c,#00838f);display:flex;justify-content:center;align-items:center;min-height:100vh;overflow:hidden}
+.container{width:800px;height:550px;background:#fff;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden;display:flex;flex-direction:column}
+.header{background:linear-gradient(135deg,#004d40,#00695c);color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.header h1{font-size:15px;font-weight:700}.header p{font-size:11px;opacity:.8;margin-top:1px}
+button{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s}
+.btn-white{background:#fff;color:#004d40}.btn-white:hover{background:#e0f2f1}
+.btn-outline{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4)}.btn-outline:hover{background:rgba(255,255,255,.25)}
+.btn-group{display:flex;gap:8px}
+.progress-bar{height:4px;background:#e0f2f1;flex-shrink:0}
+.progress-fill{height:100%;background:linear-gradient(90deg,#004d40,#26a69a);transition:width .4s}
+.page{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.hidden{display:none!important}
+.instr-page{padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+.instr-icon{font-size:52px}
+.instr-page h2{font-size:20px;font-weight:700;color:#004d40}
+.instr-page p{font-size:13px;color:#555;line-height:1.7;max-width:500px}
+.instr-chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+.chip{background:#e0f2f1;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;color:#004d40}
+.btn-start{background:linear-gradient(135deg,#004d40,#00695c);color:#fff;padding:12px 32px;font-size:14px;border-radius:8px;font-weight:700;margin-top:8px}
+.game-page{padding:16px 20px;display:flex;flex-direction:column;gap:12px;overflow:hidden;min-height:0;flex:1}
+.scenario-counter{font-size:11px;color:#888;text-align:right}
+.scenario-card{background:#e0f2f1;border-radius:8px;padding:14px 16px;border-left:4px solid #004d40;font-size:13px;color:#333;line-height:1.6;flex-shrink:0}
+.scenario-card strong{color:#004d40;font-size:11px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px}
+.options-grid{display:flex;flex-direction:column;gap:7px;flex-shrink:0}
+.opt-btn{padding:10px 14px;border:2px solid #e0e0e0;border-radius:8px;background:#fff;cursor:pointer;font-size:12px;font-weight:500;text-align:left;transition:all .2s;color:#333;line-height:1.4}
+.opt-btn:hover:not(:disabled){border-color:#00695c;background:#e0f2f1;transform:translateY(-1px)}
+.opt-btn.correct{border-color:#2e7d32;background:#e8f5e9;color:#1b5e20;font-weight:700}
+.opt-btn.wrong{border-color:#c62828;background:#ffebee;color:#b71c1c}
+.opt-btn:disabled{cursor:default}
+.feedback-box{border-radius:8px;padding:11px 14px;font-size:12px;line-height:1.6;flex-shrink:0}
+.feedback-box.correct-fb{background:#e8f5e9;border-left:4px solid #2e7d32;color:#1b5e20}
+.feedback-box.wrong-fb{background:#ffebee;border-left:4px solid #c62828;color:#b71c1c}
+.btn-next{align-self:flex-end;background:linear-gradient(135deg,#004d40,#00695c);color:#fff;padding:9px 24px;font-size:12px;border-radius:8px;font-weight:700}
+.result-page{padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+.score-circle{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#004d40,#00695c);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff}
+.score-circle .num{font-size:26px;font-weight:700}
+.score-circle .den{font-size:12px;opacity:.8}
+.result-page h2{font-size:20px;font-weight:700;color:#004d40}
+.result-page p{font-size:13px;color:#555;max-width:440px;line-height:1.6}
+.result-btns{display:flex;gap:10px;margin-top:4px}
+.btn-replay{background:linear-gradient(135deg,#004d40,#00695c);color:#fff;padding:10px 24px;font-size:13px;border-radius:8px;font-weight:700}
+.btn-close{background:#f5f5f5;color:#333;padding:10px 24px;font-size:13px;border-radius:8px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div><h1>📡 Data Act – Accesso ai Dati Industriali</h1><p>Modulo 13 – Il Data Act e la condivisione dei dati</p></div>
+    <div class="btn-group">
+      <button class="btn-outline" onclick="resetGame()">🔄 Rigioca</button>
+      <button class="btn-white" onclick="window.close()">Torna al corso</button>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="page instr-page" id="instrPage">
+    <div class="instr-icon">📡</div>
+    <h2>Cosa prevede il Data Act in questo caso?</h2>
+    <p>Il Data Act (Reg. UE 2023/2854) regola l'accesso e la condivisione dei dati generati da dispositivi connessi e servizi correlati. Per ogni scenario, scegli la risposta corretta.</p>
+    <div class="instr-chips">
+      <span class="chip">Accesso ai dati</span>
+      <span class="chip">Portabilità</span>
+      <span class="chip">Segreto commerciale</span>
+      <span class="chip">PA e emergenze</span>
+    </div>
+    <button class="btn-start" onclick="startGame()">Inizia il gioco →</button>
+  </div>
+  <div class="page game-page hidden" id="gamePage">
+    <div class="scenario-counter">Scenario <span id="scNum">1</span> di 5</div>
+    <div class="scenario-card"><strong>🏭 Scenario</strong><span id="scText"></span></div>
+    <div class="options-grid" id="optGrid"></div>
+    <div class="feedback-box hidden" id="feedbackBox"></div>
+    <button class="btn-next hidden" id="btnNext" onclick="nextScenario()">Avanti →</button>
+  </div>
+  <div class="page result-page hidden" id="resultPage">
+    <div class="score-circle"><div class="num" id="resScore">0</div><div class="den">su 5</div></div>
+    <h2 id="resTitle"></h2><p id="resText"></p>
+    <div class="result-btns">
+      <button class="btn-replay" onclick="resetGame()">🔄 Rigioca</button>
+      <button class="btn-close" onclick="window.close()">Torna al corso</button>
+    </div>
+  </div>
+</div>
+<script>
+const SCENARIOS=[
+  {text:"Un produttore di lavatrici smart raccoglie dati sull'utilizzo del dispositivo (programmi selezionati, frequenza d'uso, consumi). Il consumatore chiede di accedere a questi dati in tempo reale. Il produttore può rifiutarsi?",correct:1,options:["Sì, i dati appartengono al produttore e non deve condividerli","No, il Data Act garantisce all'utente il diritto di accesso ai dati generati dal suo dispositivo connesso","Sì, ma solo se i dati contengono segreti industriali","Solo se l'utente è un'azienda, non un privato consumatore"],feedback:"✅ <b>Risposta B.</b> L'art. 4 del Data Act impone ai produttori di dispositivi connessi di rendere i dati accessibili all'utente (consumatore o impresa) per default, in tempo reale e in formato leggibile. Il diritto di accesso è del titolare del dispositivo."},
+  {text:"Un'azienda agricola usa sensori IoT per monitorare l'irrigazione dei campi. Vuole condividere i dati con una terza parte (startup agritech) per ottimizzare le colture. Il fornitore del sensore si oppone dicendo che i dati sono suoi.",correct:2,options:["Il fornitore ha ragione: i dati appartengono a chi ha creato il dispositivo","L'azienda non può condividere i dati senza il consenso del fornitore","Il Data Act consente all'utente di condividere i dati con terze parti di sua scelta","Solo la PA può richiedere la condivisione dei dati IoT"],feedback:"✅ <b>Risposta C.</b> Il Data Act riconosce il diritto dell'utente di condividere i dati con terze parti. Il fornitore non può impedirlo. Le terze parti, però, devono rispettare le condizioni di accesso e non possono usare i dati per scopi incompatibili con quelli dichiarati."},
+  {text:"Durante un'alluvione, la Protezione Civile chiede a un'azienda di telecomunicazioni i dati di geolocalizzazione aggregati delle SIM attive in una zona colpita, per coordinare i soccorsi. L'azienda può rifiutare?",correct:1,options:["Sì, i dati personali non possono mai essere ceduti alla PA senza consenso","No, il Data Act prevede che la PA possa accedere ai dati privati in caso di emergenza pubblica o catastrofe","Dipende: solo se c'è un decreto del Ministero","Solo se i dati sono già stati anonimizzati"],feedback:"✅ <b>Risposta B.</b> Il Capitolo V del Data Act prevede un obbligo di mettere i dati a disposizione delle autorità pubbliche in situazioni eccezionali di emergenza (disastri naturali, emergenze sanitarie). Le condizioni sono: necessità, proporzionalità, temporaneità."},
+  {text:"Un titolare chiede di trasferire tutti i dati generati dal suo macchinario industriale (compreso il software embedded) a un nuovo fornitore di manutenzione. Il vecchio fornitore invoca il segreto commerciale per rifiutare.",correct:2,options:["Il fornitore può rifiutare integralmente: il segreto commerciale prevale sempre sul Data Act","L'utente non ha diritto alla portabilità dei dati se includono software","Il Data Act bilancia portabilità e segreto commerciale: i dati tecnici sono trasferibili, ma non le parti protette come segreto industriale senza adeguata tutela","Il Data Act non si applica ai macchinari industriali, solo ai dispositivi consumer"],feedback:"✅ <b>Risposta C.</b> Il Data Act riconosce il segreto commerciale come limite legittimo, ma non assoluto. Il fornitore deve dimostrare che la parte contestata costituisce effettivamente un segreto commerciale e proporre misure di tutela. Non può bloccare integralmente la portabilità."},
+  {text:"Una piattaforma di streaming smart TV raccoglie dati di visualizzazione degli utenti e li vende a inserzionisti. Un utente chiede di ricevere i propri dati di visione in un formato portatile per passare a un'altra piattaforma. La piattaforma è obbligata?",correct:0,options:["Sì, il Data Act garantisce la portabilità dei dati relazionali generati dall'uso del servizio","No, i dati comportamentali non rientrano nel Data Act ma solo nel GDPR","Solo se l'utente è un'azienda con più di 10 dipendenti","Solo per i dati degli ultimi 6 mesi"],feedback:"✅ <b>Risposta A.</b> Il Data Act si affianca al GDPR (che già garantisce portabilità per dati personali). I dati di utilizzo di servizi digitali rientrano nell'ambito del Data Act. La piattaforma deve consentire l'esportazione in formato interoperabile e standard."},
+];
+let current=0,score=0;
+function startGame(){document.getElementById('instrPage').classList.add('hidden');document.getElementById('gamePage').classList.remove('hidden');loadScenario();}
+function loadScenario(){const s=SCENARIOS[current];document.getElementById('scNum').textContent=current+1;document.getElementById('scText').textContent=s.text;document.getElementById('feedbackBox').classList.add('hidden');document.getElementById('btnNext').classList.add('hidden');document.getElementById('progressFill').style.width=((current/5)*100)+'%';const grid=document.getElementById('optGrid');grid.innerHTML='';s.options.forEach((opt,i)=>{const b=document.createElement('button');b.className='opt-btn';b.textContent=String.fromCharCode(65+i)+') '+opt;b.onclick=()=>answer(i,b);grid.appendChild(b);});}
+function answer(idx,btn){const s=SCENARIOS[current];document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);const fb=document.getElementById('feedbackBox');if(idx===s.correct){btn.classList.add('correct');score++;fb.className='feedback-box correct-fb';fb.innerHTML=s.feedback;}else{btn.classList.add('wrong');document.querySelectorAll('.opt-btn')[s.correct].classList.add('correct');fb.className='feedback-box wrong-fb';fb.innerHTML='❌ Non corretto. '+s.feedback;}fb.classList.remove('hidden');document.getElementById('btnNext').classList.remove('hidden');}
+function nextScenario(){current++;if(current>=SCENARIOS.length)showResult();else loadScenario();}
+function showResult(){document.getElementById('gamePage').classList.add('hidden');document.getElementById('resultPage').classList.remove('hidden');document.getElementById('progressFill').style.width='100%';document.getElementById('resScore').textContent=score;const t=['Riprova','Quasi!','Buono!','Ottimo!','Perfetto!'];const d=['Rileggi il Data Act: accesso, portabilità, PA e segreto commerciale sono i pilastri.','Qualche incertezza. Ricorda: l\'utente del dispositivo ha diritti, il fornitore non può bloccare tutto.','Buona conoscenza. Il Data Act bilancia diritti dell\'utente e tutela del segreto commerciale.','Ottimo! Conosci bene i diritti di accesso, portabilità e le eccezioni di emergenza.','Perfetto! Hai dimostrato una padronanza completa del Data Act.'];document.getElementById('resTitle').textContent=t[score-1]||t[0];document.getElementById('resText').textContent=d[score-1]||d[0];}
+function resetGame(){current=0;score=0;document.getElementById('resultPage').classList.add('hidden');document.getElementById('gamePage').classList.add('hidden');document.getElementById('instrPage').classList.remove('hidden');document.getElementById('progressFill').style.width='0%';}
+</script>
+</body>
+</html>
